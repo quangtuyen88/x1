@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 # Exit immediately if a command exits with a non-zero status.
-###set -e
+set -e
 
 # Check if Docker is already installed
 if command -v docker > /dev/null 2>&1; then
@@ -33,7 +33,7 @@ sleep 1
 
 # Clone the repository and checkout the specified branch
 git config --global http.postBuffer 524288000
-git clone --depth 1 --branch x1 https://github.com/FairCrypto/go-x1
+git clone --depth 1 --branch x1 https://github.com/FairCrypto/go-x1 || echo "folder is existing"
 cd go-x1
 
 # Create Dockerfile
