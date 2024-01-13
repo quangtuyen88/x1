@@ -26,7 +26,7 @@ else
     echo "User already in docker group."
 fi
 
-newgrp docker
+###newgrp docker
 
 # Display Docker version
 docker -v
