@@ -62,6 +62,16 @@ docker compose build
 # Create the persistent directory and start the container
 mkdir -p xen && docker compose up -d
 
-# Creating a new account and validator
-docker exec -i x1 /app/x1 account new --datadir /app/.x1
-docker exec -i x1 /app/x1 validator new --datadir /app/.x1
+echo "Please enter the password for the new account:"
+read -s ACCOUNT_PASSWORD
+
+
+# Use the entered password in docker exec command
+echo $ACCOUNT_PASSWORD | docker exec -i x1 /app/x1 account new --datadir /app/.x1
+
+
+echo "Please enter the password for the new validator:"
+read -s VALIDATOR_PASSWORD
+
+
+echo $VALIDATOR_PASSWORD | docker exec -i x1 /app/x1 validator new --datadir /app/.x1
