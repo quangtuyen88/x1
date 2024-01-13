@@ -56,8 +56,6 @@ services:
     command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1"]
     volumes:
       - ./xen:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
-      - ./account_password.txt:/app/account_password.txt
-      - ./validator_password.txt:/app/validator_password.txt
     ports:
       - "5050:5050"   # Expose the necessary ports
       - "18545:18545"
@@ -77,10 +75,28 @@ docker compose build
 # Create the persistent directory and start the container
 mkdir -p xen && docker compose up -d
 
-# Use the password file for the docker exec command
-docker exec -i x1 /app/x1 account new --datadir /app/.x1 --password ./account_password.txt
-docker exec -i x1 /app/x1 validator new --datadir /app/.x1 --password ./validator_password.txt
 
-# Clean up: remove the temporary password files
-rm ./account_password.txt
-rm ./validator_password.txt
+read -p ' ^|^m Enter account password: ' input_password
+
+while [ "$input_password" == "" ]
+do
+  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
+  read -p ' ^|^m Enter account password: ' input_password
+done
+
+
+# Use the password file for the docker exec command
+docker exec -i x1 /app/x1 account new --datadir /app/.x1
+
+
+
+read -p ' ^|^m Enter Validator password: ' input_password
+
+while [ "$input_password" == "" ]
+do
+  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
+  read -p ' ^|^m Enter Validator password: ' input_password
+done
+
+docker exec -i x1 /app/x1 validator new --datadir /app/.x1
+
