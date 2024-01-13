@@ -195,3 +195,5 @@ echo "Check logs: docker logs -f --tail 100 x1"
 
 echo "Restart Container : cd ~/xen/docker && docker compose up -d --force-recreate"
 
+echo "Remember backup data in folder $XEN_DIR/data/keystore"
+
