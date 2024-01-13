@@ -75,7 +75,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1"]
+    command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1", "--xenblocks-endpoint", "ws://xenblocks.io:6668"]
     volumes:
       - ./xen:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
       - ./xen/account_password.txt:/app/account_password.txt
