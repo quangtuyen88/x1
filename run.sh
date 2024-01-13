@@ -16,7 +16,6 @@ rm $HOME/get-docker.sh
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-
 fi
 
 # Add the current user to the Docker group if not already added
@@ -27,7 +26,7 @@ else
     echo "User already in docker group."
 fi
 
-newgrp docker
+###newgrp docker
 
 # Display Docker version
 docker -v
