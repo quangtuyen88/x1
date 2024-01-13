@@ -66,27 +66,19 @@ docker compose build
 mkdir -p xen && docker compose up -d
 
 
-# Function to use expect for entering password
-enter_password() {
-    local password=$1
-    local command=$2
-
-    expect <<EOF
-    spawn $command
-    expect "Passphrase:"
-    send "$password\r"
-    expect "Repeat passphrase:"
-    send "$password\r"
-    expect eof
-EOF
-}
-
+# Prompt for the password and store it in a temporary file
 echo "Please enter the password for the new account:"
 read -s ACCOUNT_PASSWORD
+echo $ACCOUNT_PASSWORD > ./account_password.txt
 
 echo "Please enter the password for the new validator:"
 read -s VALIDATOR_PASSWORD
+echo $VALIDATOR_PASSWORD > ./validator_password.txt
 
-# Use expect to handle the password input
-enter_password "$ACCOUNT_PASSWORD" "docker exec -i x1 /app/x1 account new --datadir /app/.x1"
-enter_password "$VALIDATOR_PASSWORD" "docker exec -i x1 /app/x1 validator new --datadir /app/.x1"
+# Use the password file for the docker exec command
+docker exec -i x1 /app/x1 account new --datadir /app/.x1 --password ./account_password.txt
+docker exec -i x1 /app/x1 validator new --datadir /app/.x1 --password ./validator_password.txt
+
+# Clean up: remove the temporary password files
+rm ./account_password.txt
+rm ./validator_password.txt
