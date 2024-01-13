@@ -3,6 +3,8 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+sudo apt-get install expect -y
+
 # Clone the repository and checkout the specified branch
 git config --global http.postBuffer 524288000
 git clone --depth 1 --branch x1 https://github.com/FairCrypto/go-x1
@@ -63,10 +65,28 @@ docker compose build
 # Create the persistent directory and start the container
 mkdir -p xen && docker compose up -d
 
-# echo "Please enter the password for the new account:"
-# read -s ACCOUNT_PASSWORD
 
+# Function to use expect for entering password
+enter_password() {
+    local password=$1
+    local command=$2
 
-# Use the entered password in docker exec command
-docker exec -it x1 /app/x1 account new --datadir /app/.x1
-docker exec -it x1 /app/x1 validator new --datadir /app/.x1
+    expect <<EOF
+    spawn $command
+    expect "Passphrase:"
+    send "$password\r"
+    expect "Repeat passphrase:"
+    send "$password\r"
+    expect eof
+EOF
+}
+
+echo "Please enter the password for the new account:"
+read -s ACCOUNT_PASSWORD
+
+echo "Please enter the password for the new validator:"
+read -s VALIDATOR_PASSWORD
+
+# Use expect to handle the password input
+enter_password "$ACCOUNT_PASSWORD" "docker exec -i x1 /app/x1 account new --datadir /app/.x1"
+enter_password "$VALIDATOR_PASSWORD" "docker exec -i x1 /app/x1 validator new --datadir /app/.x1"
