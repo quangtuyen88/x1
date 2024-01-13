@@ -3,8 +3,6 @@
 # Exit immediately if a command exits with a non-zero status.
 ###set -e
 
-sudo apt-get install expect -y
-
 # Check if Docker is already installed
 if command -v docker > /dev/null 2>&1; then
 echo "Docker is already installed."
@@ -27,7 +25,6 @@ else
     echo "User already in docker group."
 fi
 
-###newgrp docker
 
 # Display Docker version
 docker -v
