@@ -97,16 +97,22 @@ docker compose build
 # Create the persistent directory and start the container
 docker compose up -d
 
-# Wait for a while to ensure the container is fully up and running
-echo "Waiting for the container to initialize..."
-sleep 10  # Adjust this duration as needed
+# Wait for the container to be fully up and running
+sleep 3
+echo "Waiting for the x1 container to initialize..."
+counter=0
+max_attempts=3  # Maximum number of attempts (30 attempts with 1-second delay each)
 
-# Check if the x1 container is running
-if [ "$(docker container inspect -f '{{.State.Running}}' x1)" != "true" ]; then
-    echo "x1 container is not running. Exiting script."
-    exit 1
-fi
+while [ "$(docker container inspect -f '{{.State.Running}}' x1)" != "true" ]; do
+    if [ $counter -eq $max_attempts ]; then
+        echo "x1 container is not running. Exiting script."
+        exit 1
+    fi
+    sleep 1
+    ((counter++))
+done
 
+echo "x1 container is now running."
 # Use the password file for the docker exec command
 docker exec -i x1 /app/x1 account new --datadir /app/.x1 --password /app/account_password.txt
 
