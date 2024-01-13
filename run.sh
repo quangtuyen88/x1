@@ -5,6 +5,20 @@ set -e
 
 sudo apt-get install expect -y
 
+# Check if Docker is already installed
+if command -v docker > /dev/null 2>&1; then
+echo "Docker is already installed."
+else
+# Docker is not installed, proceed with installation
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+rm $HOME/get-docker.sh
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+docker -v
+fi
+sleep 1
+
 # Clone the repository and checkout the specified branch
 git config --global http.postBuffer 524288000
 git clone --depth 1 --branch x1 https://github.com/FairCrypto/go-x1
