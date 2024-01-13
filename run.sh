@@ -38,11 +38,33 @@ ENTRYPOINT ["/app/x1"]
 EOF
 
 
-# Prompt for passwords
-echo "Please enter the password for the new account:"
-read -s ACCOUNT_PASSWORD
-echo "Please enter the password for the new validator:"
-read -s VALIDATOR_PASSWORD
+
+mkdir -p xen
+read -p ' ^|^m Enter account password: ' input_password
+
+while [ "$input_password" == "" ]
+do
+  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
+  read -p ' ^|^m Enter account password: ' input_password
+done
+
+
+# Output the password to a file
+echo "$input_password" > ./xen/account_password.txt
+
+
+read -p ' ^|^m Enter Validator password: ' input_validator_password
+
+while [ "$input_validator_password" == "" ]
+do
+  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
+  read -p ' ^|^m Enter Validator password: ' input_validator_password
+done
+
+# Output the password to a file
+echo "$input_validator_password" > ./xen/validator_password.txt
+
+chmod 775 ./xen/*.txt
 
 # Create Docker Compose file
 cat > docker-compose.yml <<'EOF'
@@ -56,14 +78,14 @@ services:
     command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1"]
     volumes:
       - ./xen:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
+      - ./xen/account_password.txt:/app/account_password.txt
+      - ./xen/validator_password.txt:/app/validator_password.txt
     ports:
       - "5050:5050"   # Expose the necessary ports
       - "18545:18545"
       - "18546:18546"
     container_name: x1
 
-volumes:
-  xen:  # Define the 'xen' volume for persistence
 EOF
 
 
@@ -73,30 +95,21 @@ EOF
 docker compose build
 
 # Create the persistent directory and start the container
-mkdir -p xen && docker compose up -d
+docker compose up -d
 
+# Wait for a while to ensure the container is fully up and running
+echo "Waiting for the container to initialize..."
+sleep 10  # Adjust this duration as needed
 
-read -p ' ^|^m Enter account password: ' input_password
-
-while [ "$input_password" == "" ]
-do
-  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
-  read -p ' ^|^m Enter account password: ' input_password
-done
-
+# Check if the x1 container is running
+if [ "$(docker container inspect -f '{{.State.Running}}' x1)" != "true" ]; then
+    echo "x1 container is not running. Exiting script."
+    exit 1
+fi
 
 # Use the password file for the docker exec command
-docker exec -i x1 /app/x1 account new --datadir /app/.x1
+docker exec -i x1 /app/x1 account new --datadir /app/.x1 --password /app/account_password.txt
 
 
-
-read -p ' ^|^m Enter Validator password: ' input_password
-
-while [ "$input_password" == "" ]
-do
-  echo -e "\033[0;31m   ^|^x Incorrect password. \033[0m \n"
-  read -p ' ^|^m Enter Validator password: ' input_password
-done
-
-docker exec -i x1 /app/x1 validator new --datadir /app/.x1
+docker exec -i x1 /app/x1 validator new --datadir /app/.x1 --password /app/validator_password.txt
 
