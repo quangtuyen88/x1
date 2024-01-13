@@ -193,5 +193,5 @@ docker exec -i x1 /app/x1 validator new --datadir /app/.x1 --password /app/valid
 
 echo "Check logs: docker logs -f --tail 100 x1"
 
-echo "Restart Container : cd xen/docker && docker compose up -d --force-recreate"
+echo "Restart Container : cd ~/xen/docker && docker compose up -d --force-recreate"
 
