@@ -111,6 +111,10 @@ services:
       - "18545:18545"
       - "18546:18546"
     container_name: x1
+    ulimits:
+      nofile:
+        soft: 500000
+        hard: 500000
 
 EOF
 
