@@ -37,6 +37,13 @@ EXPOSE 5050 18545 18546
 ENTRYPOINT ["/app/x1"]
 EOF
 
+
+# Prompt for passwords
+echo "Please enter the password for the new account:"
+read -s ACCOUNT_PASSWORD
+echo "Please enter the password for the new validator:"
+read -s VALIDATOR_PASSWORD
+
 # Create Docker Compose file
 cat > docker-compose.yml <<'EOF'
 version: '3.8'
@@ -49,6 +56,8 @@ services:
     command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1"]
     volumes:
       - ./xen:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
+      - ./account_password.txt:/app/account_password.txt
+      - ./validator_password.txt:/app/validator_password.txt
     ports:
       - "5050:5050"   # Expose the necessary ports
       - "18545:18545"
@@ -59,21 +68,14 @@ volumes:
   xen:  # Define the 'xen' volume for persistence
 EOF
 
+
+# Rest of your script...
+
 # Build the Docker image
 docker compose build
 
 # Create the persistent directory and start the container
 mkdir -p xen && docker compose up -d
-
-
-# Prompt for the password and store it in a temporary file
-echo "Please enter the password for the new account:"
-read -s ACCOUNT_PASSWORD
-echo $ACCOUNT_PASSWORD > ./account_password.txt
-
-echo "Please enter the password for the new validator:"
-read -s VALIDATOR_PASSWORD
-echo $VALIDATOR_PASSWORD > ./validator_password.txt
 
 # Use the password file for the docker exec command
 docker exec -i x1 /app/x1 account new --datadir /app/.x1 --password ./account_password.txt
