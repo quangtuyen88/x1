@@ -17,12 +17,21 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 
-newgrp docker || echo "group existed"
-sudo usermod -aG docker ${USER} || echo "user already in docker group"
+fi
 
+# Add the current user to the Docker group if not already added
+if ! groups ${USER} | grep -q '\bdocker\b'; then
+    sudo usermod -aG docker ${USER}
+    echo "User added to docker group. Please log out and log back in for this to take effect."
+else
+    echo "User already in docker group."
+fi
+
+newgrp docker
+
+# Display Docker version
 docker -v
 
-fi
 sleep 1
 
 # Clone the repository and checkout the specified branch
