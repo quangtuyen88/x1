@@ -116,7 +116,7 @@ EOF
 cd $DOCKER_DIR && docker compose build
 
 # Check if the xen/keystore directory exists
-if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data)" ]; then
+if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
     echo -e "\033[0;31mFolder 'xen/keystore' is existing. Are you sure you want to override it?? (yes/no)\033[0m"
     read -p "Enter yes or no: " user_input
 
