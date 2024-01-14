@@ -175,7 +175,7 @@ echo "x1 container is now running."
 # Use the password file for the docker exec command
 
 # Check if the xen/keystore directory exists and is not empty
-if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data)" ]; then
+if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
     echo -e "\033[0;31mFolder 'xen/keystore' exists and is not empty. Are you sure you want to override it? (yes/no)\033[0m"
     read -p "Enter yes or no: " confirm_override
 
