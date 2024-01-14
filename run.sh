@@ -1,7 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status.
-set -e
+###set -e
 
 # Check if Docker is already installed
 if command -v docker > /dev/null 2>&1; then
