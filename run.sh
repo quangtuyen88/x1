@@ -32,6 +32,7 @@ docker -v
 sleep 1
 
 # Define variables for directory paths
+mkdir "$HOME/xen"
 XEN_DIR="$HOME/xen"
 DOCKER_DIR="$XEN_DIR/docker"
 DATA_DIR="$XEN_DIR/data"
