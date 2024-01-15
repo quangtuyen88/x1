@@ -88,6 +88,10 @@ EXPOSE 5050 18545 18546
 ENTRYPOINT ["/app/x1"]
 EOF
 
+
+CURRENT_UID=$(id -u)
+CURRENT_GID=$(id -g)
+
 # Create Docker Compose file
 cat > "$DOCKER_DIR/docker-compose.yml" <<'EOF'
 version: '3.8'
@@ -97,7 +101,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    user: "$(id -u):$(id -g)"
+    user: "${CURRENT_UID}:${CURRENT_GID}"
     command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1", "--xenblocks-endpoint", "ws://xenblocks.io:6668", "--gcmode", "full"]
     volumes:
       - ../data:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
