@@ -45,6 +45,12 @@ mkdir -p "$DATA_DIR"
 mkdir -p "$PASSFOLDER"
 
 
+
+# Adjust permissions on host directories
+sudo chown -R $(id -u):$(id -g) $DATA_DIR
+sudo chown $(id -u):$(id -g) $PASSFOLDER
+sudo chown $(id -u):$(id -g) $PASSFOLDER
+
 ###echo "xen/" > docker/.dockerignore
 
 cat > "$DOCKER_DIR/Dockerfile" <<'EOF'
@@ -91,6 +97,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    user: "$(id -u):$(id -g)"
     command: ["--testnet", "--syncmode", "snap", "--datadir", "/app/.x1", "--xenblocks-endpoint", "ws://xenblocks.io:6668", "--gcmode", "full"]
     volumes:
       - ../data:/app/.x1  # Mount the 'xen' volume to /app/.x1 inside the container
