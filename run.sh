@@ -116,15 +116,19 @@ EOF
 cd $DOCKER_DIR && docker compose build
 
 # Check if the xen/keystore directory exists
-if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
-    echo -e "\033[0;31mFolder 'xen/keystore' is existing. Are you sure you want to override it?? (yes/no)\033[0m"
-    read -p "Enter yes or no: " user_input
+if [ -d "$XEN_DIR/data/keystore" ]; then
+    # Check if the directory is not empty
+    if [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
+        echo -e "\033[0;31mFolder 'data/keystore' exists and is not empty. Are you sure you want to override it? (yes/no)\033[0m"
+        read -p "Enter yes or no: " user_input
 
-    if [ "$user_input" != "yes" ]; then
-        echo "Exiting without overriding."
-        exit 0
+        if [ "$user_input" != "yes" ]; then
+            echo "Exiting without overriding."
+            exit 0
+        fi
     fi
 fi
+
 
 
 read -p ' ^|^m Enter account password: ' input_password
@@ -174,16 +178,20 @@ done
 echo "x1 container is now running."
 # Use the password file for the docker exec command
 
-# Check if the xen/keystore directory exists and is not empty
-if [ -d "$XEN_DIR/data" ] && [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
-    echo -e "\033[0;31mFolder 'xen/keystore' exists and is not empty. Are you sure you want to override it? (yes/no)\033[0m"
-    read -p "Enter yes or no: " confirm_override
+# Check if the xen/keystore directory exists
+if [ -d "$XEN_DIR/data/keystore" ]; then
+    # Check if the directory is not empty
+    if [ "$(ls -A $XEN_DIR/data/keystore)" ]; then
+        echo -e "\033[0;31mFolder 'data/keystore' exists and is not empty. Are you sure you want to override it? (yes/no)\033[0m"
+        read -p "Enter yes or no: " user_input
 
-    if [ "$confirm_override" != "yes" ]; then
-        echo "Exiting without overriding."
-        exit 0
+        if [ "$user_input" != "yes" ]; then
+            echo "Exiting without overriding."
+            exit 0
+        fi
     fi
 fi
+
 
 # Continue with the rest of the script...
 
