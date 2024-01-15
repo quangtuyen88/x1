@@ -92,6 +92,7 @@ EOF
 CURRENT_UID=$(id -u)
 CURRENT_GID=$(id -g)
 
+
 # Create Docker Compose file
 cat > "$DOCKER_DIR/docker-compose.yml" <<'EOF'
 version: '3.8'
