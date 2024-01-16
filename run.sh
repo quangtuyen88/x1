@@ -6,6 +6,7 @@
 if [ "$(id -u)" -eq 0 ]; then
     # Echo in red color
     echo -e "\e[31mThis script should not be run as root. Please switch to a non-root user.\e[0m"
+    sleep 10
     kill -INT $$
 fi
 
